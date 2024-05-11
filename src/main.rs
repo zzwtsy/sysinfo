@@ -55,7 +55,7 @@ fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
         .map(|(_, net)| net.transmitted())
         .sum::<u64>();
     let host = Host {
-        platform: System::name().unwrap_or_default(),
+        platform: System::long_os_version().unwrap_or_default(),
         platform_version: System::os_version().unwrap_or_default(),
         cpu: sys
             .cpus()
@@ -63,7 +63,6 @@ fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
             .map(|cpu| cpu.brand().to_string())
             .collect(),
         kernel_version: System::kernel_version().unwrap_or_default(),
-        hostname: System::long_os_version().unwrap_or_default(),
         mem_total: sys.total_memory(),
         disk_total,
         swap_total: sys.total_swap(),
