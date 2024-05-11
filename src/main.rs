@@ -62,6 +62,8 @@ fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
             .iter()
             .map(|cpu| cpu.brand().to_string())
             .collect(),
+        kernel_version: System::kernel_version().unwrap_or_default(),
+        hostname: System::long_os_version().unwrap_or_default(),
         mem_total: sys.total_memory(),
         disk_total,
         swap_total: sys.total_swap(),

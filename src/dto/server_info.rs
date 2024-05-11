@@ -29,6 +29,12 @@ pub struct Host {
     /// 平台版本
     #[serde(rename = "platformVersion")]
     pub platform_version: String,
+    /// 主机名
+    #[serde(rename = "hostname")]
+    pub hostname: String,
+    /// 内核版本
+    #[serde(rename = "kernelVersion")]
+    pub kernel_version: String,
     /// CPU信息
     #[serde(rename = "cpu")]
     pub cpu: Vec<String>,
