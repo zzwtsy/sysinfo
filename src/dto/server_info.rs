@@ -61,7 +61,7 @@ pub struct Host {
 pub struct State {
     /// CPU 使用率
     #[serde(rename = "cpu")]
-    pub cpu: f64,
+    pub cpu: f32,
     /// 已使用内存
     #[serde(rename = "memUsed")]
     pub mem_used: u64,
