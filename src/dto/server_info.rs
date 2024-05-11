@@ -35,6 +35,9 @@ pub struct Host {
     /// CPU信息
     #[serde(rename = "cpu")]
     pub cpu: Vec<String>,
+    /// CPU核心数
+    #[serde(rename = "cpuCores")]
+    pub cpu_cores: u64,
     /// 总内存
     #[serde(rename = "memTotal")]
     pub mem_total: u64,

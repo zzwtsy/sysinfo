@@ -24,6 +24,7 @@ fn main() {
 }
 
 fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
+    
     let disk_total = disks
         .list()
         .iter()
@@ -57,11 +58,8 @@ fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
     let host = Host {
         platform: System::long_os_version().unwrap_or_default(),
         platform_version: System::os_version().unwrap_or_default(),
-        cpu: sys
-            .cpus()
-            .iter()
-            .map(|cpu| cpu.brand().to_string())
-            .collect(),
+        cpu: sys.cpus().iter().map(|cpu|cpu.brand().to_string()).collect(),
+        cpu_cores: sys.cpus().len() as u64,
         kernel_version: System::kernel_version().unwrap_or_default(),
         mem_total: sys.total_memory(),
         disk_total,
