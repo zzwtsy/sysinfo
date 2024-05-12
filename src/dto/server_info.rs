@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 /// 系统信息
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ServerInfo {
+pub struct SystemInfo {
     #[serde(rename = "host")]
     pub host: Host,
     #[serde(rename = "state")]
