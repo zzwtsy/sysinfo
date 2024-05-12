@@ -60,8 +60,8 @@ pub struct Host {
     #[serde(rename = "countryCode")]
     pub country_code: String,
     /// 探针版本
-    #[serde(rename = "version")]
-    pub version: String,
+    #[serde(rename = "agentVersion")]
+    pub agent_version: String,
 }
 
 /// 状态信息

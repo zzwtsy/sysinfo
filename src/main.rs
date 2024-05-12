@@ -68,7 +68,7 @@ fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
         arch: System::cpu_arch().unwrap_or_default(),
         boot_time: System::boot_time(),
         country_code: "cn".to_string(),
-        version: VERSION.to_string(),
+        agent_version: VERSION.to_string(),
     };
     let state = State {
         cpu: sys.global_cpu_info().cpu_usage(),
