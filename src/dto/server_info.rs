@@ -29,6 +29,9 @@ pub struct Host {
     /// 平台版本
     #[serde(rename = "platformVersion")]
     pub platform_version: String,
+    /// 系统版本
+    #[serde(rename = "longOSVersion")]
+    pub long_os_version: String,
     /// 内核版本
     #[serde(rename = "kernelVersion")]
     pub kernel_version: String,

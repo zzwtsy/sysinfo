@@ -56,7 +56,8 @@ fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
         .map(|(_, net)| net.transmitted())
         .sum::<u64>();
     let host = Host {
-        platform: System::long_os_version().unwrap_or_default().trim().to_string(),
+        platform: System::name().unwrap_or_default().trim().to_string(),
+        long_os_version: System::long_os_version().unwrap_or_default().trim().to_string(),
         platform_version: System::os_version().unwrap_or_default(),
         cpu: sys.cpus().iter().map(|cpu|cpu.brand().to_string()).collect(),
         cpu_cores: sys.cpus().len() as u64,
