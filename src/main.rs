@@ -15,11 +15,11 @@ fn main() {
         System::new_with_specifics(RefreshKind::new().with_cpu(CpuRefreshKind::everything()));
     let mut net_works = Networks::new_with_refreshed_list();
     loop {
-        get_os_data(&sys, &disks, &net_works);
-        std::thread::sleep(Duration::from_secs(2));
         net_works.refresh();
         sys.refresh_memory();
         sys.refresh_cpu_usage();
+        get_os_data(&sys, &disks, &net_works);
+        std::thread::sleep(Duration::from_secs(1));
     }
 }
 
@@ -56,7 +56,7 @@ fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
         .map(|(_, net)| net.transmitted())
         .sum::<u64>();
     let host = Host {
-        platform: System::long_os_version().unwrap_or_default(),
+        platform: System::long_os_version().unwrap_or_default().trim().to_string(),
         platform_version: System::os_version().unwrap_or_default(),
         cpu: sys.cpus().iter().map(|cpu|cpu.brand().to_string()).collect(),
         cpu_cores: sys.cpus().len() as u64,

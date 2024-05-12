@@ -50,7 +50,7 @@ pub struct Host {
     /// 系统架构
     #[serde(rename = "arch")]
     pub arch: String,
-    /// 开机时间
+    /// 开机时间 Unix 时间戳(秒)
     #[serde(rename = "bootTime")]
     pub boot_time: u64,
     /// 国家/地区代码
@@ -89,7 +89,7 @@ pub struct State {
     /// 网络发送速度
     #[serde(rename = "netOutSpeed")]
     pub net_out_speed: u64,
-    /// 运行时间
+    /// 运行时间(秒)
     #[serde(rename = "uptime")]
     pub uptime: u64,
     /// 1分钟平均负载
