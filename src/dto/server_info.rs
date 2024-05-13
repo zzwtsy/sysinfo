@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use serde::{Deserialize, Serialize};
 
 /// 系统信息
@@ -37,7 +39,7 @@ pub struct Host {
     pub kernel_version: String,
     /// CPU信息
     #[serde(rename = "cpu")]
-    pub cpu: Vec<String>,
+    pub cpu: HashSet<String>,
     /// CPU核心数
     #[serde(rename = "cpuCores")]
     pub cpu_cores: u64,

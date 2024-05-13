@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{collections::HashSet, time::Duration};
 
 use dto::Host;
 use sysinfo::{CpuRefreshKind, Disks, Networks, RefreshKind, System};
@@ -15,7 +15,7 @@ fn main() {
         System::new_with_specifics(RefreshKind::new().with_cpu(CpuRefreshKind::everything()));
     let mut net_works = Networks::new_with_refreshed_list();
     loop {
-        net_works.refresh();
+        net_works.refresh_list();
         sys.refresh_memory();
         sys.refresh_cpu_usage();
         get_os_data(&sys, &disks, &net_works);
@@ -24,7 +24,6 @@ fn main() {
 }
 
 fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
-    
     let disk_total = disks
         .list()
         .iter()
@@ -55,11 +54,19 @@ fn get_os_data(sys: &System, disks: &Disks, net_works: &Networks) {
         .iter()
         .map(|(_, net)| net.transmitted())
         .sum::<u64>();
+    let cpu = sys
+        .cpus()
+        .iter()
+        .map(|cpu| cpu.brand().to_string())
+        .collect::<HashSet<String>>();
     let host = Host {
         platform: System::name().unwrap_or_default().trim().to_string(),
-        long_os_version: System::long_os_version().unwrap_or_default().trim().to_string(),
+        long_os_version: System::long_os_version()
+            .unwrap_or_default()
+            .trim()
+            .to_string(),
         platform_version: System::os_version().unwrap_or_default(),
-        cpu: sys.cpus().iter().map(|cpu|cpu.brand().to_string()).collect(),
+        cpu,
         cpu_cores: sys.cpus().len() as u64,
         kernel_version: System::kernel_version().unwrap_or_default(),
         mem_total: sys.total_memory(),
