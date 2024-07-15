@@ -10,12 +10,6 @@ pub struct SystemInfo {
     pub host: Host,
     #[serde(rename = "state")]
     pub state: State,
-    /// 主机 IPV4 地址
-    #[serde(rename = "ipV4")]
-    pub ip_v4: String,
-    /// 主机 IPV6 地址
-    #[serde(rename = "ipV6")]
-    pub ip_v6: String,
     /// 上报时间
     #[serde(rename = "uploadTime")]
     pub upload_time: String,
@@ -26,11 +20,11 @@ pub struct SystemInfo {
 #[serde(rename_all = "camelCase")]
 pub struct Host {
     /// 平台
-    #[serde(rename = "platform")]
-    pub platform: String,
+    #[serde(rename = "osName")]
+    pub os_name: String,
     /// 平台版本
-    #[serde(rename = "platformVersion")]
-    pub platform_version: String,
+    #[serde(rename = "osVersion")]
+    pub os_version: String,
     /// 系统版本
     #[serde(rename = "longOSVersion")]
     pub long_os_version: String,
@@ -58,9 +52,12 @@ pub struct Host {
     /// 开机时间 Unix 时间戳(秒)
     #[serde(rename = "bootTime")]
     pub boot_time: u64,
-    /// 国家/地区代码
-    #[serde(rename = "countryCode")]
-    pub country_code: String,
+    /// 主机 IPV4 地址
+    #[serde(rename = "ipV4")]
+    pub ip_v4: String,
+    /// 主机 IPV6 地址
+    #[serde(rename = "ipV6")]
+    pub ip_v6: String,
     /// 探针版本
     #[serde(rename = "agentVersion")]
     pub agent_version: String,
@@ -94,9 +91,6 @@ pub struct State {
     /// 网络发送速度
     #[serde(rename = "netOutSpeed")]
     pub net_out_speed: u64,
-    /// 运行时间(秒)
-    #[serde(rename = "uptime")]
-    pub uptime: u64,
     /// 1分钟平均负载
     #[serde(rename = "load1")]
     pub load1: f64,
