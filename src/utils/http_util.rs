@@ -1,6 +1,6 @@
 use std::{net::IpAddr, str::FromStr};
 
-use reqwest::{Client, ClientBuilder};
+use reqwest::{Client, ClientBuilder, Error};
 
 pub struct HttpUtil {
     client: Client,
@@ -26,18 +26,18 @@ impl HttpUtil {
         http_util
     }
     /// 发送 get 请求
-    pub async fn send_get(&self, url: &str) -> anyhow::Result<String> {
+    pub async fn send_get(&self, url: &str) -> Result<String, Error> {
         let resp = self.client.get(url).send().await?;
         let text = resp.text().await?;
         Ok(text)
     }
 
-    pub async fn send_get_on_ipv4(&self, url: &str) -> anyhow::Result<String> {
+    pub async fn send_get_on_ipv4(&self, url: &str) -> Result<String, Error> {
         let resp = self.ipv4_client.get(url).send().await?;
         let text = resp.text().await?;
         Ok(text)
     }
-    pub async fn send_get_on_ipv6(&self, url: &str) -> anyhow::Result<String> {
+    pub async fn send_get_on_ipv6(&self, url: &str) -> Result<String, Error> {
         let resp = self.ipv6_client.get(url).send().await?;
         let text = resp.text().await?;
         Ok(text)

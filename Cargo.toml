@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = "1.0.86"
+# anyhow = "1.0.86"
 reqwest = { version = "0.12.4", default-features = false, features = [
     "json",
     "rustls-tls",
@@ -13,5 +13,5 @@ serde = { version = "1.0.201", features = ["derive"] }
 serde_json = "1.0.117"
 sysinfo = "0.30.12"
 tokio = { version = "1.37.0", features = ["full"] }
-trust-dns-resolver = "0.23.2"
+# trust-dns-resolver = "0.23.2"
 # openssl = { version = "0.10", features = ["vendored"] }
