@@ -1,5 +1,6 @@
 use std::{
     collections::HashSet,
+    ops::Not,
     time::{SystemTime, UNIX_EPOCH},
 };
 
@@ -16,7 +17,7 @@ pub const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSIO
 
 #[tokio::main]
 async fn main() {
-    let mut disks = Disks::new_with_refreshed_list();
+    let mut disks = Disks::new();
     let mut sys =
         System::new_with_specifics(RefreshKind::new().with_cpu(CpuRefreshKind::everything()));
     let mut networks = Networks::new_with_refreshed_list();
@@ -34,6 +35,12 @@ async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
     let disk_total = disks
         .list()
         .iter()
+        .filter(|disk| {
+            disk.mount_point()
+                .to_string_lossy()
+                .contains("docker/overlay")
+                .not()
+        })
         .map(|disk| {
             println!(
                 "硬盘：{:?}={} B={:?}={:?}",
