@@ -34,7 +34,10 @@ async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
     let disk_total = disks
         .list()
         .iter()
-        .map(|disk| disk.total_space())
+        .map(|disk| {
+            println!("硬盘：{}",disk.name());
+            disk.total_space()
+        })
         .sum::<u64>();
     let disk_used = disks
         .list()
