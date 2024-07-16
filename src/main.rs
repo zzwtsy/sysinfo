@@ -35,12 +35,7 @@ async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
     let disk_total = disks
         .list()
         .iter()
-        .filter(|disk| {
-            disk.mount_point()
-                .to_string_lossy()
-                .contains("docker/overlay")
-                .not()
-        })
+        .filter(|disk| disk.file_system().eq_ignore_ascii_case("overlay").not())
         .map(|disk| {
             println!(
                 "硬盘：{:?}={} B={:?}={:?}",
@@ -55,6 +50,7 @@ async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
     let disk_used = disks
         .list()
         .iter()
+        .filter(|disk| disk.file_system().eq_ignore_ascii_case("overlay").not())
         .map(|disk| disk.total_space() - disk.available_space())
         .sum::<u64>();
     let net_in_transfer = networks
