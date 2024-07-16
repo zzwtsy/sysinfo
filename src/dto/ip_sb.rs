@@ -7,12 +7,3 @@ pub struct IPSB {
     /// 国家代码
     pub country_code: String,
 }
-
-impl IPSB {
-    pub fn default() -> Self {
-        IPSB {
-            ip: "".to_string(),
-            country_code: "".to_string(),
-        }
-    }
-}

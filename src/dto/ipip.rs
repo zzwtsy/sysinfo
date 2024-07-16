@@ -13,14 +13,3 @@ pub struct Location {
     /// 国家代码
     pub country_code: String,
 }
-
-impl IPIP {
-    pub fn default() -> Self {
-        IPIP {
-            ip: "".to_string(),
-            location: Location {
-                country_code: "".to_string(),
-            },
-        }
-    }
-}

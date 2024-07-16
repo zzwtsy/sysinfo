@@ -27,13 +27,13 @@ impl GeoIp {
 
 pub async fn fetch_geo_ip() -> GeoIp {
     let http_util = HttpUtil::new();
-    let ip_sb = fetch_ip_sb(&http_util).await;
-    if ip_sb.is_err().not() {
-        return ip_sb.unwrap();
-    }
     let ipip = fetch_ipip(&http_util).await;
     if ipip.is_err().not() {
         return ipip.unwrap();
+    }
+    let ip_sb = fetch_ip_sb(&http_util).await;
+    if ip_sb.is_err().not() {
+        return ip_sb.unwrap();
     }
     return GeoIp::default();
 }
