@@ -35,7 +35,7 @@ async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
         .list()
         .iter()
         .map(|disk| {
-            println!("硬盘：{}",disk.name().to_str());
+            println!("硬盘：{:?}={} B",disk.name(),disk.total_space());
             disk.total_space()
         })
         .sum::<u64>();
