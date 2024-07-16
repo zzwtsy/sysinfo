@@ -58,6 +58,8 @@ pub struct Host {
     /// 主机 IPV6 地址
     #[serde(rename = "ipV6")]
     pub ip_v6: String,
+    /// 国家代码
+    pub country_code: String,
     /// 探针版本
     #[serde(rename = "agentVersion")]
     pub agent_version: String,

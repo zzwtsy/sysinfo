@@ -1,0 +1,27 @@
+{
+    "cn": {
+        "Ipv4UrlHelp": [
+            "https://api.ipify.org",
+            "https://myip.ipip.net",
+            "https://ddns.oray.com/checkip",
+            "https://ip.3322.net"
+        ],
+        "Ipv6UrlHelp": [
+            "https://speed.neu6.edu.cn/getIP.php",
+            "https://v6.ident.me",
+            "https://6.ipw.cn"
+        ]
+    },
+    "en": {
+        "Ipv4UrlHelp": [
+            "https://myip.ipip.net",
+            "https://ddns.oray.com/checkip",
+            "https://ip.3322.net"
+        ],
+        "Ipv6UrlHelp": [
+            "https://speed.neu6.edu.cn/getIP.php",
+            "https://v6.ident.me",
+            "https://6.ipw.cn"
+        ]
+    }
+}

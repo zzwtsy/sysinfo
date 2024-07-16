@@ -1,14 +1,16 @@
 use std::{
     collections::HashSet,
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::{SystemTime, UNIX_EPOCH},
 };
 
-use local_ip_address::list_afinet_netifas;
+use fetch_ip::fetch_geo_ip;
 use sysinfo::{CpuRefreshKind, Disks, Networks, RefreshKind, System};
 
 use dto::{server_info::SystemInfo, Host, State};
 
 mod dto;
+mod fetch_ip;
+mod utils;
 
 pub const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSION"));
 
@@ -23,12 +25,12 @@ async fn main() {
     sys.refresh_memory();
     sys.refresh_cpu();
     networks.refresh_list();
-    get_os_info(&sys, &disks, &networks);
-    std::thread::sleep(Duration::from_secs(1));
+    get_os_info(&sys, &disks, &networks).await;
+    // std::thread::sleep(Duration::from_secs(1));
     // }
 }
 
-fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
+async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
     let disk_total = disks
         .list()
         .iter()
@@ -64,10 +66,7 @@ fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
         .iter()
         .map(|cpu| cpu.brand().to_string())
         .collect::<HashSet<String>>();
-    let network_interfaces = list_afinet_netifas().unwrap();
-    network_interfaces
-        .iter()
-        .for_each(|(name, ip)| println!("{} - {}", name, ip));
+    let geo_ip = fetch_geo_ip().await;
     let host = Host {
         os_name: System::name().unwrap_or_default().trim().to_string(),
         long_os_version: System::long_os_version()
@@ -83,8 +82,9 @@ fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
         swap_total: sys.total_swap(),
         arch: System::cpu_arch().unwrap_or_default(),
         boot_time: System::boot_time(),
-        ip_v4: "".to_string(),
-        ip_v6: "".to_string(),
+        ip_v4: geo_ip.ip_v4,
+        ip_v6: geo_ip.ip_v6,
+        country_code: geo_ip.country_code,
         agent_version: VERSION.to_string(),
     };
     let state = State {
