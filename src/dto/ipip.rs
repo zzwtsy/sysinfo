@@ -12,10 +12,15 @@ pub struct IPIP {
 pub struct Location {
     /// 国家代码
     pub country_code: String,
-    // /// 国家名称
-    // pub country_name: String,
-    // pub province: String,
-    // pub city: String,
-    // pub latitude: String,
-    // pub longitude: String,
+}
+
+impl IPIP {
+    pub fn default() -> Self {
+        IPIP {
+            ip: "".to_string(),
+            location: Location {
+                country_code: "".to_string(),
+            },
+        }
+    }
 }
