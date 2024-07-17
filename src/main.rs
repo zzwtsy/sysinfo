@@ -88,7 +88,6 @@ async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
         ip_v4: geo_ip.ip_v4,
         ip_v6: geo_ip.ip_v6,
         country_code: geo_ip.country_code,
-        agent_version: VERSION.to_string(),
     };
     let state = State {
         cpu: sys.global_cpu_info().cpu_usage(),
@@ -111,6 +110,7 @@ async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
             .expect("Time went backwards")
             .as_secs()
             .to_string(),
+        agent_version: VERSION.to_string(),
     };
     println!("{:}", serde_json::to_string_pretty(&server_info).unwrap());
 }

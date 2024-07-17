@@ -9,6 +9,8 @@ pub struct SystemInfo {
     pub state: State,
     /// 上报时间
     pub upload_time: String,
+    /// 探针版本
+    pub agent_version: String,
 }
 
 /// 主机信息
@@ -42,8 +44,6 @@ pub struct Host {
     pub ip_v6: String,
     /// 国家代码
     pub country_code: String,
-    /// 探针版本
-    pub agent_version: String,
 }
 
 /// 状态信息
