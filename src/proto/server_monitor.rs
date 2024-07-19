@@ -102,8 +102,8 @@ pub struct ServerResponse {
 /// Generated client implementations.
 pub mod server_monitor_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
-    use tonic::codegen::http::Uri;
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
     pub struct ServerMonitorServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -147,8 +147,9 @@ pub mod server_monitor_service_client {
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             ServerMonitorServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -187,63 +188,78 @@ pub mod server_monitor_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::ServerHostRequest>,
         ) -> std::result::Result<tonic::Response<super::ServerResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/server_monitor.ServerMonitorService/ReportServerHost",
             );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new(
-                "server_monitor.ServerMonitorService",
-                "ReportServerHost",
-            ));
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "server_monitor.ServerMonitorService",
+                        "ReportServerHost",
+                    ),
+                );
             self.inner.unary(req, path, codec).await
         }
         pub async fn report_server_state(
             &mut self,
             request: impl tonic::IntoRequest<super::ServerStateRequest>,
         ) -> std::result::Result<tonic::Response<super::ServerResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/server_monitor.ServerMonitorService/ReportServerState",
             );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new(
-                "server_monitor.ServerMonitorService",
-                "ReportServerState",
-            ));
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "server_monitor.ServerMonitorService",
+                        "ReportServerState",
+                    ),
+                );
             self.inner.unary(req, path, codec).await
         }
         pub async fn update_ip(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateIpRequest>,
         ) -> std::result::Result<tonic::Response<super::ServerResponse>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/server_monitor.ServerMonitorService/UpdateIP",
             );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new(
-                "server_monitor.ServerMonitorService",
-                "UpdateIP",
-            ));
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("server_monitor.ServerMonitorService", "UpdateIP"),
+                );
             self.inner.unary(req, path, codec).await
         }
     }
