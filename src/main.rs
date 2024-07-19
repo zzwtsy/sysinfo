@@ -1,116 +1,45 @@
-use std::{
-    collections::HashSet,
-    ops::Not,
-    time::{SystemTime, UNIX_EPOCH},
-};
+use std::{collections::HashMap, env};
 
-use fetch_ip::fetch_geo_ip;
-use sysinfo::{CpuRefreshKind, Disks, Networks, RefreshKind, System};
-
-use dto::{server_info::SystemInfo, Host, State};
+use proto::ServerMonitorClient;
 
 mod dto;
 mod fetch_ip;
+mod proto;
 mod utils;
-
-pub const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSION"));
 
 #[tokio::main]
 async fn main() {
-    let mut disks = Disks::new();
-    let mut sys =
-        System::new_with_specifics(RefreshKind::new().with_cpu(CpuRefreshKind::everything()));
-    let mut networks = Networks::new_with_refreshed_list();
-    // loop {
-    disks.refresh_list();
-    sys.refresh_memory();
-    sys.refresh_cpu();
-    networks.refresh_list();
-    get_os_info(&sys, &disks, &networks).await;
-    // std::thread::sleep(Duration::from_secs(1));
-    // }
+    let args = parse_args();
+    let mut server_monitor_client = ServerMonitorClient::new(
+        args.get("--url").unwrap().to_string(),
+        args.get("--port").unwrap().to_string(),
+    )
+    .await;
+    server_monitor_client.report_server_monitor().await;
 }
 
-async fn get_os_info(sys: &System, disks: &Disks, networks: &Networks) {
-    let disk_total = disks
-        .list()
-        .iter()
-        .filter(|disk| disk.file_system().eq_ignore_ascii_case("overlay").not())
-        .map(|disk| disk.total_space())
-        .sum::<u64>();
-    let disk_used = disks
-        .list()
-        .iter()
-        .filter(|disk| disk.file_system().eq_ignore_ascii_case("overlay").not())
-        .map(|disk| disk.total_space() - disk.available_space())
-        .sum::<u64>();
-    let net_in_transfer = networks
-        .list()
-        .iter()
-        .map(|(_, net)| net.total_received())
-        .sum::<u64>();
-    let net_out_transfer = networks
-        .list()
-        .iter()
-        .map(|(_, net)| net.total_transmitted())
-        .sum::<u64>();
-    let net_in_speed = networks
-        .list()
-        .iter()
-        .map(|(_, net)| net.received())
-        .sum::<u64>();
-    let net_out_speed = networks
-        .list()
-        .iter()
-        .map(|(_, net)| net.transmitted())
-        .sum::<u64>();
-    let cpu = sys
-        .cpus()
-        .iter()
-        .map(|cpu| cpu.brand().to_string())
-        .collect::<HashSet<String>>();
-    let geo_ip = fetch_geo_ip().await;
-    let host = Host {
-        os_name: System::name().unwrap_or_default().trim().to_string(),
-        long_os_version: System::long_os_version()
-            .unwrap_or_default()
-            .trim()
-            .to_string(),
-        os_version: System::os_version().unwrap_or_default(),
-        cpu,
-        cpu_cores: sys.cpus().len() as u64,
-        kernel_version: System::kernel_version().unwrap_or_default(),
-        mem_total: sys.total_memory(),
-        disk_total,
-        swap_total: sys.total_swap(),
-        arch: System::cpu_arch().unwrap_or_default(),
-        boot_time: System::boot_time(),
-        ip_v4: geo_ip.ip_v4,
-        ip_v6: geo_ip.ip_v6,
-        country_code: geo_ip.country_code,
-    };
-    let state = State {
-        cpu: sys.global_cpu_info().cpu_usage(),
-        mem_used: sys.used_memory(),
-        swap_used: sys.used_swap(),
-        disk_used,
-        net_in_transfer,
-        net_out_transfer,
-        net_in_speed,
-        net_out_speed,
-        load1: System::load_average().one,
-        load5: System::load_average().five,
-        load15: System::load_average().fifteen,
-    };
-    let server_info = SystemInfo {
-        host,
-        state,
-        upload_time: SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Time went backwards")
-            .as_secs()
-            .to_string(),
-        agent_version: VERSION.to_string(),
-    };
-    println!("{:}", serde_json::to_string_pretty(&server_info).unwrap());
+fn parse_args() -> HashMap<String, String> {
+    let mut args_map = HashMap::<String, String>::new();
+    for arg in env::args() {
+        let arg_trim = arg.trim();
+        if arg_trim.starts_with("--url=") {
+            let split = arg_trim.split_once("=");
+            if let Some((key, value)) = split {
+                args_map.insert(key.to_string(), value.to_string());
+            }
+        }
+        if arg_trim.starts_with("--port=") {
+            let split = arg_trim.split_once("=");
+            if let Some((key, value)) = split {
+                args_map.insert(key.to_string(), value.to_string());
+            }
+        }
+    }
+    if args_map.len() < 2 {
+        if args_map.get("--url").is_none() {
+            panic!("Missing args: --url")
+        }
+        panic!("Missing args: --port")
+    }
+    return args_map;
 }

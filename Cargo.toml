@@ -1,15 +1,24 @@
 [package]
-name = "sysinfo_rs"
+name = "server_monitor_agent"
 version = "0.1.0"
 edition = "2021"
 
+[profile.release]
+strip = true
+codegen-units = 1
+
 [dependencies]
-serde = { version = "1.0", features = ["derive"], default-features = false }
+serde = { version = "1.0", default-features = false, features = ["derive"] }
 reqwest = { version = "0.12", default-features = false, features = [
     "json",
     "rustls-tls-native-roots",
 ] }
-anyhow = { default-features = false, version = "1.0" }
-serde_json = { default-features = false, version = "1.0" }
-sysinfo = { default-features = false, version = "0.30" }
-tokio = { version = "1.38", features = ["full"], default-features = false }
+serde_json = { version = "1.0", default-features = false }
+sysinfo = { version = "0.30", default-features = false }
+tokio = { version = "1.38", default-features = false, features = ["full"] }
+tonic = "0.12"
+prost = "0.13"
+anyhow = "1.0"
+
+[build-dependencies]
+tonic-build = "0.12"
