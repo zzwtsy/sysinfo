@@ -11,8 +11,12 @@ mod utils;
 async fn main() {
     let args = parse_args();
     let mut server_monitor_client = ServerMonitorClient::new(
-        args.get("--url").unwrap().to_string(),
-        args.get("--port").unwrap().to_string(),
+        args.get("--url").expect("Parse url failed").to_string(),
+        args.get("--port").expect("Parse port failed").to_string(),
+        args.get("--id")
+            .expect("Parse id failed")
+            .parse()
+            .expect("Parse id failed"),
     )
     .await;
     server_monitor_client.report_server_monitor().await;
@@ -34,12 +38,23 @@ fn parse_args() -> HashMap<String, String> {
                 args_map.insert(key.to_string(), value.to_string());
             }
         }
-    }
-    if args_map.len() < 2 {
-        if args_map.get("--url").is_none() {
-            panic!("Missing args: --url")
+        if arg_trim.starts_with("--id=") {
+            let split = arg_trim.split_once("=");
+            if let Some((key, value)) = split {
+                args_map.insert(key.to_string(), value.to_string());
+            }
         }
+    }
+
+    if args_map.get("--url").is_none() {
+        panic!("Missing args: --url")
+    }
+    if args_map.get("--port").is_none() {
         panic!("Missing args: --port")
     }
+    if args_map.get("--id").is_none() {
+        panic!("Missing args: --id")
+    }
+
     return args_map;
 }

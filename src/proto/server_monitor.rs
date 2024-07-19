@@ -10,8 +10,8 @@ pub struct ServerHost {
     pub long_os_version: ::prost::alloc::string::String,
     #[prost(string, tag = "4")]
     pub kernel_version: ::prost::alloc::string::String,
-    #[prost(string, tag = "5")]
-    pub cpu: ::prost::alloc::string::String,
+    #[prost(string, repeated, tag = "5")]
+    pub cpu: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(uint32, tag = "6")]
     pub cpu_cores: u32,
     #[prost(uint64, tag = "7")]
@@ -66,6 +66,8 @@ pub struct ServerStateRequest {
     pub upload_time: u64,
     #[prost(string, tag = "3")]
     pub agent_version: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "4")]
+    pub server_id: u64,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -76,18 +78,20 @@ pub struct ServerHostRequest {
     pub upload_time: u64,
     #[prost(string, tag = "3")]
     pub agent_version: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "4")]
+    pub server_id: u64,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ServerStateAndHostRequest {
-    #[prost(message, optional, tag = "1")]
-    pub server_state: ::core::option::Option<ServerState>,
-    #[prost(message, optional, tag = "2")]
-    pub server_host: ::core::option::Option<ServerHost>,
-    #[prost(uint64, tag = "3")]
-    pub upload_time: u64,
-    #[prost(string, tag = "4")]
-    pub agent_version: ::prost::alloc::string::String,
+pub struct UpdateIpRequest {
+    #[prost(string, tag = "1")]
+    pub ipv4: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub ipv6: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub country_code: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "4")]
+    pub server_id: u64,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
@@ -98,8 +102,8 @@ pub struct ServerResponse {
 /// Generated client implementations.
 pub mod server_monitor_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     #[derive(Debug, Clone)]
     pub struct ServerMonitorServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -143,9 +147,8 @@ pub mod server_monitor_service_client {
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::BoxBody>,
-            >>::Error: Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
         {
             ServerMonitorServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -184,81 +187,63 @@ pub mod server_monitor_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::ServerHostRequest>,
         ) -> std::result::Result<tonic::Response<super::ServerResponse>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/server_monitor.ServerMonitorService/ReportServerHost",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "server_monitor.ServerMonitorService",
-                        "ReportServerHost",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "server_monitor.ServerMonitorService",
+                "ReportServerHost",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn report_server_state(
             &mut self,
             request: impl tonic::IntoRequest<super::ServerStateRequest>,
         ) -> std::result::Result<tonic::Response<super::ServerResponse>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/server_monitor.ServerMonitorService/ReportServerState",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "server_monitor.ServerMonitorService",
-                        "ReportServerState",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "server_monitor.ServerMonitorService",
+                "ReportServerState",
+            ));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn report_server_state_and_host(
+        pub async fn update_ip(
             &mut self,
-            request: impl tonic::IntoRequest<super::ServerStateAndHostRequest>,
+            request: impl tonic::IntoRequest<super::UpdateIpRequest>,
         ) -> std::result::Result<tonic::Response<super::ServerResponse>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/server_monitor.ServerMonitorService/ReportServerStateAndHost",
+                "/server_monitor.ServerMonitorService/UpdateIP",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "server_monitor.ServerMonitorService",
-                        "ReportServerStateAndHost",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "server_monitor.ServerMonitorService",
+                "UpdateIP",
+            ));
             self.inner.unary(req, path, codec).await
         }
     }

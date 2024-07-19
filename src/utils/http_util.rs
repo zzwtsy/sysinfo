@@ -1,6 +1,6 @@
 use std::{net::IpAddr, str::FromStr, time::Duration};
 
-use reqwest::{Client, ClientBuilder, Error};
+use reqwest::{Client, ClientBuilder};
 use serde::de::DeserializeOwned;
 
 pub struct HttpUtil {
@@ -32,7 +32,7 @@ impl HttpUtil {
         http_util
     }
     /// 发送 get 请求
-    pub async fn send_get<T>(&self, url: &str) -> Result<T, Error>
+    pub async fn send_get<T>(&self, url: &str) -> anyhow::Result<T>
     where
         T: DeserializeOwned,
     {
@@ -42,7 +42,7 @@ impl HttpUtil {
     }
 
     /// 发送 get 请求，仅请求 ipv4 地址
-    pub async fn send_get_on_ipv4<T>(&self, url: &str) -> Result<T, Error>
+    pub async fn send_get_on_ipv4<T>(&self, url: &str) -> anyhow::Result<T>
     where
         T: DeserializeOwned,
     {
@@ -52,7 +52,7 @@ impl HttpUtil {
     }
 
     /// 发送 get 请求，仅请求 ipv6 地址
-    pub async fn send_get_on_ipv6<T>(&self, url: &str) -> Result<T, Error>
+    pub async fn send_get_on_ipv6<T>(&self, url: &str) -> anyhow::Result<T>
     where
         T: DeserializeOwned,
     {

@@ -29,7 +29,7 @@ pub async fn fetch_geo_ip() -> GeoIp {
     return GeoIp::default();
 }
 
-async fn fetch_ip_sb(http_util: &HttpUtil) -> Result<GeoIp, &str> {
+async fn fetch_ip_sb(http_util: &HttpUtil) -> anyhow::Result<GeoIp> {
     let ipv4_json = http_util.send_get::<IPSB>(&IP_SB_V4).await;
     let ipv4 = ipv4_json.unwrap_or_else(|_| IPSB::default());
 
@@ -37,8 +37,10 @@ async fn fetch_ip_sb(http_util: &HttpUtil) -> Result<GeoIp, &str> {
     let ipv6 = ipv6_json.unwrap_or_else(|_| IPSB::default());
 
     if ipv4.ip == "" && ipv6.ip == "" {
-        println!("ip.sb failed to obtain the local ip address");
-        return Err("ip.sb failed to obtain the local ip address");
+        eprintln!("ip.sb failed to obtain the local ip address");
+        return Err(anyhow::anyhow!(
+            "ip.sb failed to obtain the local ip address"
+        ));
     }
 
     Ok(GeoIp {
@@ -52,7 +54,7 @@ async fn fetch_ip_sb(http_util: &HttpUtil) -> Result<GeoIp, &str> {
     })
 }
 
-async fn fetch_ipip(http_util: &HttpUtil) -> Result<GeoIp, &str> {
+async fn fetch_ipip(http_util: &HttpUtil) -> anyhow::Result<GeoIp> {
     let ipv4_json = http_util.send_get_on_ipv4::<IPIP>(&IPIP).await;
     let ipv4 = ipv4_json.unwrap_or_else(|_| IPIP::default());
 
@@ -60,8 +62,10 @@ async fn fetch_ipip(http_util: &HttpUtil) -> Result<GeoIp, &str> {
     let ipv6 = ipv6_json.unwrap_or_else(|_| IPIP::default());
 
     if ipv4.ip == "" && ipv6.ip == "" {
-        println!("ipip.net failed to obtain the local ip address");
-        return Err("ipip.net failed to obtain the local ip address");
+        eprintln!("ipip.net failed to obtain the local ip address");
+        return Err(anyhow::anyhow!(
+            "ipip.net failed to obtain the local ip address"
+        ));
     }
 
     Ok(GeoIp {
