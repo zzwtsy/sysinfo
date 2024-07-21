@@ -1,17 +1,18 @@
 use std::{
     collections::HashSet,
     ops::Not,
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 use sysinfo::{CpuRefreshKind, Disks, Networks, RefreshKind, System};
+use tokio::time;
 use tonic::{transport::Channel, Request};
 
 use crate::fetch_ip::fetch_geo_ip;
 
 use super::{
     server_monitor_service_client::ServerMonitorServiceClient, ServerHost, ServerHostRequest,
-    ServerState, ServerStateRequest,
+    ServerState, ServerStateRequest, UpdateIpRequest,
 };
 
 const VERSION: &'static str = include_str!(concat!(env!("OUT_DIR"), "/VERSION"));
@@ -47,11 +48,15 @@ impl ServerMonitorClient {
     }
 
     pub async fn report_server_monitor(&mut self) {
+        // 仅在启动时上报一次
         self.report_server_host().await;
-        let mut server_monitor_interval = tokio::time::interval(Duration::from_secs(1));
         loop {
-            server_monitor_interval.tick().await;
             self.report_server_state().await;
+            // 每间隔 3 小时上传一次 ip 信息
+            if self.get_upload_time() % (3 * 3600) == 0 {
+                self.update_ip().await;
+            }
+            time::sleep(time::Duration::from_secs(1)).await
         }
     }
 
@@ -65,7 +70,11 @@ impl ServerMonitorClient {
             server_id: self.server_id,
         });
         match self.client.report_server_host(request).await {
-            Ok(_) => {}
+            Ok(msg) => {
+                if msg.get_ref().success.not() {
+                    eprintln!("report_server_host failed")
+                }
+            }
             Err(error) => {
                 eprintln!("report_server_host failed: {}", error)
             }
@@ -84,11 +93,38 @@ impl ServerMonitorClient {
             server_id: self.server_id,
         });
         match self.client.report_server_state(request).await {
-            Ok(_) => {}
+            Ok(msg) => {
+                if msg.get_ref().success.not() {
+                    eprintln!("report_server_state failed")
+                }
+            }
             Err(error) => {
                 eprintln!("report_server_state failed: {}", error)
             }
         };
+    }
+
+    async fn update_ip(&mut self) {
+        let geo_ip = fetch_geo_ip().await;
+        if geo_ip.ipv4.is_empty() && geo_ip.ipv6.is_empty() {
+            return;
+        }
+        let request = UpdateIpRequest {
+            ipv4: geo_ip.ipv4,
+            ipv6: geo_ip.ipv6,
+            country_code: geo_ip.country_code,
+            server_id: self.server_id,
+        };
+        match self.client.update_ip(request).await {
+            Ok(msg) => {
+                if msg.get_ref().success.not() {
+                    eprintln!("update_ip failed")
+                }
+            }
+            Err(error) => {
+                eprintln!("update_ip failed: {}", error)
+            }
+        }
     }
 
     fn refresh_system_components(&mut self) {
@@ -97,6 +133,7 @@ impl ServerMonitorClient {
         self.sys.refresh_cpu();
     }
 
+    /// 获取当前时间戳（秒）
     fn get_upload_time(&self) -> u64 {
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
