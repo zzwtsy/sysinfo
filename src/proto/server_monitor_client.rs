@@ -47,6 +47,7 @@ impl ServerMonitorClient {
         }
     }
 
+    /// 启动上报服务器信息
     pub async fn report_server_monitor(&mut self) {
         // 仅在启动时上报一次
         self.report_server_host().await;
@@ -60,6 +61,7 @@ impl ServerMonitorClient {
         }
     }
 
+    /// 上报服务器信息
     async fn report_server_host(&mut self) {
         self.refresh_system_components();
         let server_host = self.get_server_host().await;
@@ -76,16 +78,18 @@ impl ServerMonitorClient {
                 }
             }
             Err(error) => {
-                eprintln!("report_server_host failed: {}", error)
+                eprintln!("report_server_host failed: {}", error.message())
             }
         };
     }
 
+    /// 上报服务器状态
     async fn report_server_state(&mut self) {
         self.refresh_system_components();
         self.networks.refresh_list();
 
         let server_state = self.get_server_state();
+
         let request: Request<ServerStateRequest> = Request::new(ServerStateRequest {
             server_state: Some(server_state),
             upload_time: self.get_upload_time(),
@@ -99,11 +103,12 @@ impl ServerMonitorClient {
                 }
             }
             Err(error) => {
-                eprintln!("report_server_state failed: {}", error)
+                eprintln!("report_server_state failed: {}", error.message())
             }
         };
     }
 
+    /// 更新 ip 信息
     async fn update_ip(&mut self) {
         let geo_ip = fetch_geo_ip().await;
         if geo_ip.ipv4.is_empty() && geo_ip.ipv6.is_empty() {
@@ -122,11 +127,12 @@ impl ServerMonitorClient {
                 }
             }
             Err(error) => {
-                eprintln!("update_ip failed: {}", error)
+                eprintln!("update_ip failed: {}", error.message())
             }
         }
     }
 
+    /// 刷新系统组件
     fn refresh_system_components(&mut self) {
         self.disks.refresh_list();
         self.sys.refresh_memory();
@@ -140,6 +146,7 @@ impl ServerMonitorClient {
             .map_or(0, |time| time.as_secs())
     }
 
+    /// 获取服务器信息
     async fn get_server_host(&self) -> ServerHost {
         let disk_total = self
             .disks
@@ -160,10 +167,7 @@ impl ServerMonitorClient {
         let geo_ip = fetch_geo_ip().await;
         ServerHost {
             os_name: System::name().unwrap_or_default().trim().to_string(),
-            long_os_version: System::long_os_version()
-                .unwrap_or_default()
-                .trim()
-                .to_string(),
+            distribution_id: System::distribution_id(),
             os_version: System::os_version().unwrap_or_default(),
             cpu,
             cpu_cores: self.sys.cpus().len() as u32,
@@ -179,6 +183,7 @@ impl ServerMonitorClient {
         }
     }
 
+    /// 获取服务器状态
     fn get_server_state(&self) -> ServerState {
         let disk_used = self
             .disks

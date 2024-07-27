@@ -24,6 +24,7 @@ fn main() {
     tonic_build::configure()
         .out_dir("src/proto")
         .build_server(false)
+        .build_client(true)
         .compile(&["proto/server_monitor.proto"], &["proto"])
         .unwrap();
     let version = get_git_version();

@@ -4,7 +4,7 @@ package server_monitor;
 message ServerHost {
   string os_name = 1;
   string os_version = 2;
-  string long_os_version = 3;
+  string distribution_id = 3;
   string kernel_version = 4;
   repeated string cpu = 5;
   uint32 cpu_cores = 6;

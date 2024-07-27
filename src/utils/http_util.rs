@@ -15,16 +15,16 @@ impl HttpUtil {
         let ipv6_addr = IpAddr::from_str("::").unwrap();
         let http_util = HttpUtil {
             client: ClientBuilder::new()
-                .connect_timeout(Duration::from_secs(5))
+                .connect_timeout(Duration::from_millis(500))
                 .build()
                 .expect("Init Http Client Failed"),
             ipv4_client: ClientBuilder::new()
-                .connect_timeout(Duration::from_secs(5))
+                .connect_timeout(Duration::from_millis(500))
                 .local_address(ipv4_addr)
                 .build()
                 .expect("Init only send ipv4 Http Client Failed"),
             ipv6_client: ClientBuilder::new()
-                .connect_timeout(Duration::from_secs(5))
+                .connect_timeout(Duration::from_millis(500))
                 .local_address(ipv6_addr)
                 .build()
                 .expect("Init only send ipv6 Http Client Failed"),

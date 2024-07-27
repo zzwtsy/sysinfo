@@ -18,7 +18,9 @@ reqwest = { version = "0.12", default-features = false, features = [
 ] }
 serde_json = { version = "1.0", default-features = false }
 sysinfo = { version = "0.30", default-features = false }
-tokio = { version = "1.38", default-features = false, features = ["full"] }
+tokio = { version = "1.38", default-features = false, features = [
+    "rt-multi-thread",
+] }
 tonic = { version = "0.12" }
 prost = { version = "0.13", default-features = false, features = ["derive"] }
 anyhow = { version = "1.0" }

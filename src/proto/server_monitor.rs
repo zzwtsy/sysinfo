@@ -7,7 +7,7 @@ pub struct ServerHost {
     #[prost(string, tag = "2")]
     pub os_version: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
-    pub long_os_version: ::prost::alloc::string::String,
+    pub distribution_id: ::prost::alloc::string::String,
     #[prost(string, tag = "4")]
     pub kernel_version: ::prost::alloc::string::String,
     #[prost(string, repeated, tag = "5")]
